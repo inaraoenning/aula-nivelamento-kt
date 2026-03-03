@@ -72,8 +72,6 @@ Selecione uma operação
             }
         }
     }
-
-
 }
 
 // Val = imutavel
@@ -151,7 +149,7 @@ class Mercado {
         produto.quantidade -= quantidade
         val valorVendido: Double = valorVenda * 1.05 // Adiciona 5% ao valor de venda
         saldoInicial += valorVendido
-        println("Produto vendido: ${nomePadrao}, Quantidade: $quantidade, Valor de venda: ${valorVendido}")
+        println("Produto vendido: $nomePadrao, Quantidade: $quantidade, Valor de venda: $valorVendido")
     }
 
     fun verEstoque() {
