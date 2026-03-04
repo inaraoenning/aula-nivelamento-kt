@@ -1,3 +1,7 @@
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+
 fun main() {
 
     val biblioteca = Biblioteca()
@@ -7,20 +11,49 @@ fun main() {
         print(
             """
 Selecione uma operação
-1- Cadastrar
-2- Emprestar
-3- Devolver 
-4- Ver catálogo
-5- Ver Emprestimos
-6- Financeiro (multas arrecadadas)
+1- Emprestar
+2- Devolução
+3- Ver Emprestimos
+4- Ver Financeiro (Multas)
+5- Cadastrar Livro
+6- Ver catálogo 
 7- Cadastrar Usuário
 8- Ver Usuários
+9- Sair
     """.trimIndent()
         )
         val opcao: Int = readln().toInt()
 
         when (opcao) {
             1 -> {
+                println("=============Emprestar Livro===============")
+                println("Informe o código do Livro")
+                val codigo = readln().toInt()
+
+                println("Informe o código do cliente")
+                val codCliente = readln().toInt()
+
+                biblioteca.emprestarLivro(codigo, codCliente)
+            }
+
+            2 -> {
+                println("=============Devolver Livro===============")
+                println("Informe o código do livro: ")
+                val codigo = readln().toInt()
+                biblioteca.devolucaoLivro(codigo)
+            }
+
+            3 -> {
+                println("==============Empréstimos================")
+
+                biblioteca.verUsuariosEmprestimos()
+            }
+
+            4 -> {
+                println("==============Financeiro================")
+            }
+
+            5 -> {
                 println("=============Cadastrar Livro===============")
                 println("Cód. Livro:")
                 val codigo = readln().toInt()
@@ -34,38 +67,11 @@ Selecione uma operação
                 biblioteca.cadastrarLivro(codigo, titulo, autor)
             }
 
-            2 -> {
-                println("=============Emprestar Livro===============")
-                println("Informe o código do Livro")
-                val codigo = readln().toInt()
-
-                println("Informe o código do cliente")
-                val codCliente = readln().toInt()
-
-                biblioteca.emprestarLivro(codigo, codCliente)
-            }
-
-            3 -> {
-                println("=============Devolver Livro===============")
-                println("Informe o código do livro: ")
-                val codigo = readln().toInt()
-                biblioteca.devolucaoLivro(codigo)
-            }
-
-            4 -> {
+            6 -> {
                 println("==============Ver Catálogo================")
                 biblioteca.verCatalogo()
             }
 
-            5 -> {
-                println("==============Empréstimos================")
-
-                biblioteca.verUsuariosEmprestimos()
-            }
-
-            6 -> {
-                println("==============Financeiro================")
-            }
 
             7 -> {
                 println("==============Cadastrar Usuário================")
@@ -80,7 +86,7 @@ Selecione uma operação
 
             8 -> {
                 println("==============Lista de Usuário================")
-
+                biblioteca.verUsuarios()
             }
         }
     }
@@ -101,9 +107,25 @@ data class Usuario(
 data class Emprestimo(
     val livro: Livro,
     val usuario: Usuario,
-//    val dataEmprestimo:
-//    val dataDevolucao:
+    val multa: Multa,
 )
+
+class Multa(
+    val dataEmprestimo: LocalDate,
+    val dataDevolucao: LocalDate,
+    val diasPermitidos: Long = 7,
+    val valorPorDia: BigDecimal
+
+) {
+    val diasAtraso: Long
+        get() {
+            val diasEntre = ChronoUnit.DAYS.between(dataEmprestimo, dataDevolucao)
+            val atraso = diasEntre - diasPermitidos
+            return if (atraso > 0) atraso else 0
+        }
+    val valorMulta: BigDecimal
+        get() = valorPorDia.multiply(BigDecimal.valueOf(diasAtraso))
+}
 
 class Biblioteca {
     private var saldoFinanceiro: Double = 0.0
@@ -193,7 +215,7 @@ class Biblioteca {
     fun verUsuariosEmprestimos() {
         println("🧒🏻 Usuário           📔 Livro")
         emprestimos.forEach { livro ->
-            println("${livro.usuario}     ${livro.usuario}")
+            println("Aluno: ${livro.usuario.nome}    Livro: ${livro.usuario.nome}")
 
         }
     }
