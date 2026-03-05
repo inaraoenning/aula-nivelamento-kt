@@ -107,19 +107,22 @@ data class Usuario(
 data class Emprestimo(
     val livro: Livro,
     val usuario: Usuario,
-    val multa: Multa,
+    val dataEmprestimo: LocalDate,
+    val dataDevolucao: LocalDate? = null, // guarda uma data mas começa sem valor
 )
 
 class Multa(
-    val dataEmprestimo: LocalDate,
-    val dataDevolucao: LocalDate,
     val diasPermitidos: Long = 7,
     val valorPorDia: BigDecimal
 
 ) {
+
+    fun calcularValor( emprestimo: Emprestimo){
+    }
+
     val diasAtraso: Long
         get() {
-            val diasEntre = ChronoUnit.DAYS.between(dataEmprestimo, dataDevolucao)
+            val diasEntre = ChronoUnit.DAYS.between(Emprestimo.data)
             val atraso = diasEntre - diasPermitidos
             return if (atraso > 0) atraso else 0
         }
